@@ -7,15 +7,24 @@ module Qapi
 
     self.token_url = "/oauth/token"
 
-    # TODO: Make this generic and don't use an Integration object
     # OR we could create a value object inside Qapi
     # @param [Integration] integration model
-    def initialize(key, secret, integration)
+    def _initialize(key, secret, integration)
       @integration = integration
       client = OAuth2::Client.new(key, secret, site: self.class.site, token_url: self.class.token_url)
       @access_token = OAuth2::AccessToken.new(client, integration.token, {
         refresh_token: integration.refresh_token,
         expires_at: integration.expires_at,
+        mode: :query
+      })
+    end
+
+    # New!! Make this generic and don't use an Integration object
+    def initialize(key, secret, token:, refresh_token:, expires_at: nil)
+      client = OAuth2::Client.new(key, secret, site: self.class.site, token_url: self.class.token_url)
+      @access_token = OAuth2::AccessToken.new(client, token, {
+        refresh_token: refresh_token,
+        expires_at: expires_at,
         mode: :query
       })
     end
@@ -31,7 +40,9 @@ module Qapi
     protected
       def refresh_if_required!
         if @access_token.expired?
+          puts "Refreshing"
           @access_token = @access_token.refresh!
+          # FIXME: This only worked for the integration
           @integration.update!(
             token:         @access_token.token,
             refresh_token: @access_token.refresh_token,

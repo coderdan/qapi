@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{Query library for various popular APIs.}
   spec.description   = %q{Query library for various popular APIs.}
-  spec.homepage      = "https://codehire.com"
+  spec.homepage      = "https://github.com/coderdan/qapi"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or

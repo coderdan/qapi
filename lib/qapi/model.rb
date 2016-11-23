@@ -13,6 +13,14 @@ module Qapi
       self.attrs << name.to_s
     end
 
+    def self.parse(connection, object)
+      if object.kind_of?(Array)
+        object.map { |obj| new(connection, obj) }
+      else
+        new(connection, object)
+      end
+    end
+
     def initialize(connection, attrs = {})
       @connection = connection
       self.class.attrs.each do |attr|
